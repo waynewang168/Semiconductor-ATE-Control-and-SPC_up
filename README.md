@@ -64,7 +64,7 @@
 
 產線批次測試完成後，執行分析腳本將自動產出 300 DPI 工業級品管圖表：
 
-![SPC Dashboard Preview](docs/spc_binning_dashboard.png)
+![SPC Dashboard Preview](spc_binning_dashboard.png)
 
 ---
 
