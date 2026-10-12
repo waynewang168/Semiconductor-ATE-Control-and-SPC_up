@@ -37,6 +37,7 @@ flowchart TD
     style Analytics fill:#1e293b,stroke:#34d399,stroke-width:2px,color:#fff
     style Storage fill:#334155,stroke:#94a3b8,stroke-width:2px,color:#fff
     style B5 fill:#dc2626,stroke:#f87171,color:#fff
+    style G min-width:260px
 ```
 
 
