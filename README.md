@@ -94,7 +94,7 @@ flowchart TD
 
 ### 步驟 2：執行 Python SPC 儀表板分析
 ```bash
-# 安裝所需依賴
+# 安裝所需
 pip install numpy pandas matplotlib scipy
 
 # 執行分析腳本 (自動讀取 TestLogs/ 並產出儀表板圖表)
