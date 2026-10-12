@@ -73,7 +73,7 @@ flowchart TD
 
 ---
 
-## 📊 報表產出展示 (Dashboard Preview)
+## 報表產出展示 (Dashboard Preview)
 
 產線批次測試完成後，執行分析腳本將自動產出 300 DPI 工業級品管圖表：
 
@@ -99,9 +99,3 @@ pip install numpy pandas matplotlib scipy
 
 # 執行分析腳本 (自動讀取 TestLogs/ 並產出儀表板圖表)
 python v2_spc_analysis.py
-💼 履歷對應亮點 (Resume Highlight Summary)
-軟體工程：C# WinForms / Async Task / CancellationToken / Python OOP / ETL Pipeline
-
-半導體封測領域知識：ATE 量測邏輯、Open/Short 接觸測試、Hard Binning 分選、EMO 工安機制
-
-品管與資料分析：SPC 統計製程管制、Cp / Cpk 指標計算、Matplotlib 資料視覺化
