@@ -13,24 +13,24 @@
 ```mermaid
 flowchart LR
     subgraph Host["ATE Test Host (C# WinForms)"]
-        direction TB
-        A["Start Test"] --> B["Contact Check: Open/Short @ -100uA"]
-        B -- Fail --> B5["Fast Abort: Bin 5 Fixture Protection"]
-        B -- Pass --> C["DC Parametric: Idd & Vbus"]
-        C --> D["Hard Binning Classifier: Bin 1 ~ 4"]
-        D --> E["Log Dispatcher: LSL / USL / Measured"]
+        direction LR
+        A["Start&nbsp;Test"] --> B["Contact&nbsp;Check:&nbsp;Open/Short&nbsp;@&nbsp;-100uA"]
+        B -- Fail --> B5["Fast&nbsp;Abort:&nbsp;Bin&nbsp;5&nbsp;Fixture&nbsp;Protection"]
+        B -- Pass --> C["DC&nbsp;Parametric:&nbsp;Idd&nbsp;&amp;&nbsp;Vbus"]
+        C --> D["Hard&nbsp;Binning&nbsp;Classifier:&nbsp;Bin&nbsp;1~4"]
+        D --> E["Log&nbsp;Dispatcher:&nbsp;LSL&nbsp;/&nbsp;USL&nbsp;/&nbsp;Meas"]
         B5 --> E
     end
 
     subgraph Storage["Storage"]
-        F[("TestLogs Directory")]
+        F[("TestLogs&nbsp;Directory")]
     end
 
     subgraph Analytics["SPC Data Pipeline (Python)"]
-        direction TB
-        G["Regex Log Parser & Anomaly Handling"]
-        H["SPC Engine: Mean, Std, Cp, Cpk"]
-        I["Quality Dashboard (Matplotlib / Seaborn)"]
+        direction LR
+        G["Regex&nbsp;Log&nbsp;Parser&nbsp;&amp;&nbsp;Anomaly&nbsp;Handling"]
+        H["SPC&nbsp;Engine:&nbsp;Mean,&nbsp;Std,&nbsp;Cp,&nbsp;Cpk"]
+        I["Quality&nbsp;Dashboard&nbsp;(Matplotlib&nbsp;/&nbsp;Seaborn)"]
         G --> H --> I
     end
 
