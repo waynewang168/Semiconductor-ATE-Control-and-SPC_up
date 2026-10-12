@@ -28,7 +28,7 @@ flowchart TD
 
     subgraph Analytics["SPC Data Pipeline (Python)"]
         direction TB
-        F --> G[Regex Log Parser & Anomaly Handling]
+        F --> G["Regex Log Parser<br/>& Anomaly Handling"]
         G --> H[SPC Engine: Mean, Std, Cp, Cpk]
         H --> I[Quality Dashboard: Matplotlib / Seaborn]
     end
