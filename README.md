@@ -12,32 +12,37 @@
 ## 系統架構與設計核心 (System Architecture)
 ```mermaid
 flowchart TD
+    %% 全域樣式設定：統一加寬所有節點至 260px，並增加內邊距
+    classDef wideNode min-width:260px,padding:10px
+    classDef redAlert min-width:260px,padding:10px,fill:#dc2626,stroke:#f87171,color:#fff
+
     subgraph Host["ATE Test Host (C# WinForms)"]
         direction TB
-        A[Start Test] --> B["Contact Check: Open/Short @ -100uA"]
-        B -- Fail --> B5["Fast Abort: Bin 5 Fixture Protection"]
-        B -- Pass --> C["DC Parametric: Idd Current & Vbus Volt"]
-        C --> D["Hard Binning Classifier: Bin 1 ~ 4"]
-        D --> E["Log Dispatcher: LSL / USL / Meas"]
+        A["Start Test"]:::wideNode 
+        --> B["Contact Check: Open/Short @ -100uA"]:::wideNode
+        
+        B -- Fail --> B5["Fast Abort: Bin 5 Fixture Protection"]:::redAlert
+        B -- Pass --> C["DC Parametric: Idd Current & Vbus Volt"]:::wideNode
+        
+        C --> D["Hard Binning Classifier: Bin 1 ~ 4"]:::wideNode
+        D --> E["Log Dispatcher: LSL / USL / Meas"]:::wideNode
         B5 --> E
     end
 
     subgraph Storage["Storage"]
-        E --> F[(TestLogs Directory)]
+        E --> F[("TestLogs Directory")]:::wideNode
     end
 
     subgraph Analytics["SPC Data Pipeline (Python)"]
         direction TB
-        F --> G["Regex Log Parser<br/>& Anomaly Handling"]
-        G --> H["SPC Engine:<br/>Mean, Std, Cp, Cpk"]
-        H --> I["Quality Dashboard:<br/>Matplotlib / Seaborn"]
+        F --> G["Regex Log Parser & Anomaly Handling"]:::wideNode
+        G --> H["SPC Engine: Mean, Std, Cp, Cpk"]:::wideNode
+        H --> I["Quality Dashboard: Matplotlib / Seaborn"]:::wideNode
     end
 
     style Host fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#fff
     style Analytics fill:#1e293b,stroke:#34d399,stroke-width:2px,color:#fff
     style Storage fill:#334155,stroke:#94a3b8,stroke-width:2px,color:#fff
-    style B5 fill:#dc2626,stroke:#f87171,color:#fff
-    style G min-width:220px
 ```
 
 ---
