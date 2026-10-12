@@ -10,21 +10,34 @@
 ---
 
 ## 📌 系統架構與設計核心 (System Architecture)
+```mermaid
+flowchart TD
+    subgraph Host["ATE Test Host (C# WinForms)"]
+        direction TB
+        A[Start Test] --> B[Contact Check: Open/Short @ -100uA]
+        B -- Fail --> B5[Fast Abort: Bin 5 Fixture Protection]
+        B -- Pass --> C[DC Parametric: Idd Current & Vbus Volt]
+        C --> D[Hard Binning Classifier: Bin 1 ~ 4]
+        D --> E[Log Dispatcher: LSL / USL / Meas]
+        B5 --> E
+    end
 
-[ ATE Test Host (C# WinForms) ]
-├── Contact Check (Open/Short @ -100uA) ──► Fail ──► Fast Abort (Bin 5, Fixture Protection)
-├── DC Parametric (Idd Current, Vbus Voltage)
-├── Hard Binning Classifier (Bin 1 ~ 5)
-└── Log Dispatcher (.log format with USL/LSL)
-│
-▼
-[ TestLogs Directory ]
-│
-▼
-[ SPC Data Pipeline (Python) ]
-├── Regex-based Log Parser & Anomaly Handling
-├── Statistical Process Control Engine (Mean, Std, Cp, Cpk)
-└── Quality Dashboard (Matplotlib / Seaborn)
+    subgraph Storage["Storage"]
+        E --> F[(TestLogs Directory)]
+    end
+
+    subgraph Analytics["SPC Data Pipeline (Python)"]
+        direction TB
+        F --> G[Regex Log Parser & Anomaly Handling]
+        G --> H[SPC Engine: Mean, Std, Cp, Cpk]
+        H --> I[Quality Dashboard: Matplotlib / Seaborn]
+    end
+
+    style Host fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#fff
+    style Analytics fill:#1e293b,stroke:#34d399,stroke-width:2px,color:#fff
+    style Storage fill:#334155,stroke:#94a3b8,stroke-width:2px,color:#fff
+    style B5 fill:#dc2626,stroke:#f87171,color:#fff
+```
 
 
 ---
