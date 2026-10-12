@@ -14,11 +14,11 @@
 flowchart TD
     subgraph Host["ATE Test Host (C# WinForms)"]
         direction TB
-        A[Start Test] --> B[Contact Check: Open/Short @ -100uA]
-        B -- Fail --> B5[Fast Abort: Bin 5 Fixture Protection]
-        B -- Pass --> C[DC Parametric: Idd Current & Vbus Volt]
-        C --> D[Hard Binning Classifier: Bin 1 ~ 4]
-        D --> E[Log Dispatcher: LSL / USL / Meas]
+        A[Start Test] --> B["Contact Check: Open/Short @ -100uA"]
+        B -- Fail --> B5["Fast Abort: Bin 5 Fixture Protection"]
+        B -- Pass --> C["DC Parametric: Idd Current & Vbus Volt"]
+        C --> D["Hard Binning Classifier: Bin 1 ~ 4"]
+        D --> E["Log Dispatcher: LSL / USL / Meas"]
         B5 --> E
     end
 
@@ -29,17 +29,16 @@ flowchart TD
     subgraph Analytics["SPC Data Pipeline (Python)"]
         direction TB
         F --> G["Regex Log Parser<br/>& Anomaly Handling"]
-        G --> H[SPC Engine: Mean, Std, Cp, Cpk]
-        H --> I[Quality Dashboard: Matplotlib / Seaborn]
+        G --> H["SPC Engine:<br/>Mean, Std, Cp, Cpk"]
+        H --> I["Quality Dashboard:<br/>Matplotlib / Seaborn"]
     end
 
     style Host fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#fff
     style Analytics fill:#1e293b,stroke:#34d399,stroke-width:2px,color:#fff
     style Storage fill:#334155,stroke:#94a3b8,stroke-width:2px,color:#fff
     style B5 fill:#dc2626,stroke:#f87171,color:#fff
-    style G min-width:260px
+    style G min-width:220px
 ```
-
 
 ---
 
