@@ -1,4 +1,4 @@
-# ⚡ Semiconductor ATE Host Controller & Automated SPC Quality Pipeline
+# Semiconductor ATE Host Controller & Automated SPC Quality Pipeline
 
 [![Platform](https://img.shields.io/badge/Platform-Windows%20Forms%20%7C%20.NET-512BD4)](https://dotnet.microsoft.com/)
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue)](https://www.python.org/)
@@ -9,7 +9,7 @@
 
 ---
 
-## 📌 系統架構與設計核心 (System Architecture)
+## 系統架構與設計核心 (System Architecture)
 ```mermaid
 flowchart TD
     subgraph Host["ATE Test Host (C# WinForms)"]
@@ -42,7 +42,7 @@ flowchart TD
 
 ---
 
-## 🚀 核心功能特色 (Key Features)
+## 核心功能特色 (Key Features)
 
 ### 1. C# ATE Host Controller (前端人機與機台控制)
 - **非同步排程架構（Async/Await）**：UI 主執行緒與量測任務完全解耦，批次連續測試不卡頓。
@@ -61,7 +61,7 @@ flowchart TD
 
 ---
 
-## 🏷️ Hard Binning 分選定義 (Bin Map)
+## Hard Binning 分選定義 (Bin Map)
 
 | Bin Code | 分選名稱 | 測試判定條件 | 處置方式 |
 | :---: | :--- | :--- | :--- |
@@ -81,7 +81,7 @@ flowchart TD
 
 ---
 
-## 🛠️ 快速開始 (Getting Started)
+## 快速開始 (Getting Started)
 
 ### 需求環境
 - **C#**：.NET 6.0 / .NET Framework 4.8+, Visual Studio 2022
