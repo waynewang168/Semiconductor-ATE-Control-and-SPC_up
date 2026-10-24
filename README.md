@@ -44,22 +44,23 @@ flowchart LR
 ```
 ---
 
-## 核心功能特色 (Key Features)
+### 核心功能特色 (Key Features)
 
-### 1. C# ATE Host Controller (前端人機與機台控制)
-- **非同步排程架構（Async/Await）**：UI 主執行緒與量測任務完全解耦，批次連續測試不卡頓。
-- **治具與探針保護（Open/Short Check）**：於通電前先行量測保護二極體順向壓降；若接觸不良（Open）或短路（Short），系統立即阻斷主供電並分選為 `Bin 5`，預防治具燒毀。
-- **EMO 安全狀態機（Emergency Off）**：整合 `CancellationTokenSource`，作業員觸發急停鍵時能在 10ms 內安全中止迴圈，並保證中斷前的已測數據完整落地歸檔。
-- **標準化測試日誌輸出**：自動將每顆晶片量測數據格式化輸出為含有 SPEC 上下限（USL / LSL）、量測數值與 Hard Bin 標籤之文字 Log。
+#### 1. C# ATE Host Controller (前端人機與機台控制)
+* **非同步排程架構 (Async/Await)**：UI 主執行緒與量測任務完全解耦，批次連續測試不卡頓。
+* **治具與探針保護 (Open/Short Check)**：於通電前先行量測保護二極體順向壓降；若接觸不良 (Open) 或短路 (Short)，系統立即阻斷主供電並分選為 `Bin 5`，預防治具燒毀。
+* **EMO 安全狀態機 (Emergency Off)**：整合 `CancellationTokenSource`，作業員觸發急停鍵時能在 10ms 內安全中止迴圈，並保證中斷前的已測數據完整落地歸檔。
+* **標準化測試日誌輸出**：自動將每顆晶片量測數據格式化輸出為含有 SPEC 上下限 (USL / LSL)、量測數值與 Hard Bin 標籤之文字 Log。
 
-2. Python SPC Analytics Pipeline (後端品管分析)
-- 日誌解析與異常清洗（ETL Pipeline）：使用正規表達式（Regex）批次解析 .log 檔案；自動將被 OS 阻斷之無效數值（0V / 0mA）填補為 NaN，確保統計分佈真實性。
-- 製程能力評估（Process Capability Analysis）：
-  $$Cp = \frac{USL - LSL}{6\sigma}, \quad Cpk = \min\left(\frac{USL - \mu}{3\sigma}, \frac{\mu - LSL}{3\sigma}\right)$$
-- 3-in-1 品質監控儀表板：
-  - 靜態電流 (Idd) 直方圖：檢視漏電流偏態與離群值。
-  - 供電電壓 (Vbus) 常態擬合曲線：評估製程中心是否偏移與分佈收斂性。
-  - 失效項目柏拉圖分析（Defect Pareto Chart）：採用雙 Y 軸架構（缺陷計數 ＋ 累積百分比折線），排除 Pass 樣本，專注鎖定 80% 良率損失之關鍵失效模式（Hard Bin），作為產線改善第一優先級。
+#### 2. Python SPC Analytics Pipeline (後端品管分析)
+* **日誌解析與異常清洗 (ETL Pipeline)**：使用正規表達式 (Regex) 批次解析 `.log` 檔案；自動將被 OS 阻斷之無效數值 (0V / 0mA) 填補為 `NaN`，確保統計分佈真實性。
+* **製程能力評估 (Process Capability Analysis)**：
+  $$Cp = \frac{USL - LSL}{6\sigma}$$
+  $$Cpk = \min\left(\frac{USL - \mu}{3\sigma}, \frac{\mu - LSL}{3\sigma}\right)$$
+* **3-in-1 品質監控儀表板**：
+  * **靜態電流 (Idd) 直方圖**：檢視漏電流偏態與離群值。
+  * **供電電壓 (Vbus) 常態擬合曲線**：評估製程中心是否偏移與分佈收斂性。
+  * **失效項目柏拉圖分析 (Defect Pareto Chart)**：採用雙 Y 軸架構（缺陷計數 ＋ 累積百分比折線），排除 Pass 樣本，專注鎖定 80% 良率損失之關鍵失效模式 (Hard Bin)，作為產線改善第一優先級。
 ---
 
 ## Hard Binning 分選定義 (Bin Map)
