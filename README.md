@@ -55,7 +55,9 @@ flowchart LR
 #### 2. Python SPC Analytics Pipeline (後端品管分析)
 * **日誌解析與異常清洗 (ETL Pipeline)**：使用正規表達式 (Regex) 批次解析 `.log` 檔案；自動將被 OS 阻斷之無效數值 (0V / 0mA) 填補為 `NaN`，確保統計分佈真實性。
 * **製程能力評估 (Process Capability Analysis)**：
+  
   $$Cp = \frac{USL - LSL}{6\sigma}$$
+  
   $$Cpk = \min\left(\frac{USL - \mu}{3\sigma}, \frac{\mu - LSL}{3\sigma}\right)$$
 * **3-in-1 品質監控儀表板**：
   * **靜態電流 (Idd) 直方圖**：檢視漏電流偏態與離群值。
