@@ -46,7 +46,7 @@ def parse_log_files(folder_path):
                 curr_val = float(curr_match.group(1)) if curr_match else np.nan
                 volt_val = float(volt_match.group(1)) if volt_match else np.nan
                 
-                # 若被 OS 阻斷供電 (0.0V / 0.0mA)，設為 NaN 避免扭曲 SPC
+                # 剔除受保護斷電的 0 值，避免扭曲 SPC
                 if volt_val == 0.0: volt_val = np.nan
                 if curr_val == 0.0: curr_val = np.nan
 
@@ -94,7 +94,7 @@ def calculate_spc_metrics(data, lsl, usl):
 
 def generate_spc_dashboard(df):
     """
-    繪製三合一工業級 SPC 品質與良率監控看板
+    繪製三合一工業級 SPC 品質與柏拉圖缺陷監控看板
     """
     if df.empty:
         return
@@ -109,7 +109,8 @@ def generate_spc_dashboard(df):
     volt_stats = calculate_spc_metrics(volt_data, volt_lsl, volt_usl)
 
     fig, axes = plt.subplots(1, 3, figsize=(19, 5.5))
-    fig.suptitle(f"ATE 量產測試 SPC 品質監控與 Hard Bin 分選報表 (DUT 總量: {len(df)} 顆)", fontsize=16, fontweight='bold')
+    yield_rate = (len(df[df["Result"] == "PASS"]) / len(df)) * 100
+    fig.suptitle(f"ATE 量產測試 SPC 品質監控與缺陷柏拉圖 (總量: {len(df)} 顆 | 良率: {yield_rate:.1f}%)", fontsize=16, fontweight='bold')
 
     # ========================================================
     # 圖 1: 待機電流 (Idd) 直方圖
@@ -125,7 +126,7 @@ def generate_spc_dashboard(df):
         ax1.legend(loc="upper right")
 
     # ========================================================
-    # 圖 2: 供電電壓 (Vbus) 直方圖 + 常態擬合曲線 (純上電數據)
+    # 圖 2: 供電電壓 (Vbus) 直方圖 + 常態擬合曲線
     # ========================================================
     ax2 = axes[1]
     if not volt_data.empty:
@@ -143,44 +144,54 @@ def generate_spc_dashboard(df):
         ax2.legend(loc="upper left")
 
     # ========================================================
-    # 圖 3: Hard Bin 缺陷分選圓環圖 + 獨立圖例 (避免文字擁擠)
+    # 圖 3: 測試失效柏拉圖 (Pareto Chart - 雙 Y 軸)
     # ========================================================
     ax3 = axes[2]
-    bin_counts = df["Bin_Name"].value_counts()
-    
-    color_map = {
-        "Bin1_Pass": "#32CD32",          # 綠色
-        "Bin2_LeakageFail": "#FF8C00",   # 橘色
-        "Bin3_VoltFail": "#DC143C",      # 紅色
-        "Bin4_TotalFail": "#8B0000",     # 深暗紅
-        "Bin5_OsFail": "#9370DB"         # 紫色
-    }
-    slice_colors = [color_map.get(b_name, "#A9A9A9") for b_name in bin_counts.index]
+    # 篩選出純失敗品 (剔除 Pass)
+    fail_df = df[df["Result"] == "FAIL"]
 
-    # 製作圓環圖 (Donut Chart)，扇形內不寫長文字，只標百分比
-    wedges, texts, autotexts = ax3.pie(
-        bin_counts, 
-        labels=None, # 不把字硬塞在扇形邊緣
-        autopct='%1.1f%%', 
-        pctdistance=0.8,
-        startangle=140, 
-        colors=slice_colors,
-        wedgeprops=dict(width=0.4, edgecolor='white', linewidth=2)
-    )
-    for at in autotexts:
-        at.set_fontsize(9)
-        at.set_fontweight('bold')
-    
-    # 建立清楚的右側圖例 (標明名稱與顆數)
-    legend_labels = [f"{b_name} ({bin_counts[b_name]} 顆)" for b_name in bin_counts.index]
-    ax3.legend(wedges, legend_labels, title="Hard Bin 分類明細", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
+    if not fail_df.empty:
+        pareto_data = fail_df["Bin_Name"].value_counts().sort_values(ascending=False)
+        categories = pareto_data.index
+        counts = pareto_data.values
+        cum_percentage = (np.cumsum(counts) / np.sum(counts)) * 100
 
-    yield_rate = (len(df[df["Result"] == "PASS"]) / len(df)) * 100
-    ax3.set_title(f"Hard Bin 分選佔比 (總良率: {yield_rate:.1f}%)", fontsize=12, fontweight='bold')
+        # 左 Y 軸: 缺陷數量長條圖
+        bars = ax3.bar(categories, counts, color='#1F497D', edgecolor='black', width=0.6)
+        ax3.set_ylabel("缺陷數量 (Count)", color='#1F497D', fontweight='bold')
+        ax3.tick_params(axis='y', labelcolor='#1F497D')
+        ax3.set_xticklabels(categories, rotation=20, ha='right', fontsize=9)
+        ax3.set_title(f"失效項目柏拉圖分析 (Total Fail: {len(fail_df)} 顆)", fontsize=12)
+
+        # 在長條圖上方標註顆數
+        for bar in bars:
+            height = bar.get_height()
+            ax3.annotate(f'{int(height)}',
+                         xy=(bar.get_x() + bar.get_width() / 2, height),
+                         xytext=(0, 3), textcoords="offset points",
+                         ha='center', va='bottom', fontsize=9, fontweight='bold')
+
+        # 右 Y 軸: 累積百分比折線圖
+        ax3_twin = ax3.twinx()
+        ax3_twin.plot(categories, cum_percentage, color='#DC143C', marker='o', linewidth=2, markersize=5)
+        ax3_twin.set_ylabel("累積百分比 (%)", color='#DC143C', fontweight='bold')
+        ax3_twin.tick_params(axis='y', labelcolor='#DC143C')
+        ax3_twin.set_ylim(0, 105)
+        ax3_twin.grid(False)  # 避免右軸網格線與左軸重疊干擾
+
+        # 標註累積百分比數值
+        for i, pct in enumerate(cum_percentage):
+            ax3_twin.annotate(f'{pct:.1f}%',
+                              xy=(i, pct),
+                              xytext=(0, 6), textcoords="offset points",
+                              ha='center', va='bottom', fontsize=8, color='#8B0000', fontweight='bold')
+    else:
+        ax3.text(0.5, 0.5, "100% Pass\n無缺陷數據", ha='center', va='center', fontsize=14, color='green')
+        ax3.set_title("失效項目柏拉圖", fontsize=12)
 
     plt.tight_layout()
     plt.savefig("spc_binning_dashboard.png", dpi=300, bbox_inches='tight')
-    print("\n[成功] 已產出高解析度 SPC 監控儀表板: 'spc_binning_dashboard.png'")
+    print("\n[成功] 已產出高解析度 SPC 監控儀表板 (含柏拉圖): 'spc_binning_dashboard.png'")
     plt.show()
 
 if __name__ == "__main__":
